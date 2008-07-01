@@ -138,9 +138,9 @@ org.systemsbiology.visualization.FilterDataTableControl = Class.create(
 
     getTitleHtml: function() {
         if (this.openFilterContainer) {
-            return "<img alt='-' src='http://systemsbiology-visualizations.appspot.com/images/collapse.jpg'>" + this.labelForTitle;
+            return "<img alt='-' src='http://systemsbiology-visualizations.googlecode.com/svn-history/r3/trunk/src/main/images/collapse.jpg'>" + this.labelForTitle;
         }
-        return "<img alt='+' src='http://systemsbiology-visualizations.appspot.com/images/expand.jpg'>" + this.labelForTitle;
+        return "<img alt='+' src='http://systemsbiology-visualizations.googlecode.com/svn-history/r3/trunk/src/main/images/expand.jpg'>" + this.labelForTitle;
     },
 
     drawFilterColumnControls: function(selectedColumnIndexes, options) {
