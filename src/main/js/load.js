@@ -68,20 +68,8 @@ var systemsbiology = {
 
     getDependentCss: function(version, pkg) {
         // TODO: Do versioning?
-        var addCssLink = function(cssName) {
-            return "<link type='text/css' rel='stylesheet' href='" + systemsbiology.CssBase + "/" + cssName + ".css'>";
-        };
-
         var tags = new Array();
-        if (pkg == "transposeTableControl") {
-            tags[tags.length] = addCssLink("transposeTableControl");
-        } else if (pkg == "filterDataTableControl") {
-            tags[tags.length] = addCssLink("filterDataTableControl");
-        } else if (pkg == "dataTableColumnControl") {
-            tags[tags.length] = addCssLink("dataTableColumnControl");
-        } else if (pkg == "exportDataTable") {
-            tags[tags.length] = addCssLink("exportDataTable");
-        }
+        tags[tags.length] = "<link type='text/css' rel='stylesheet' href='" + systemsbiology.CssBase + "/" + pkg + ".css'>";
         return tags;
     }
 };
