@@ -71,7 +71,9 @@ var systemsbiology = {
     getDependentCss: function(version, pkg) {
         // TODO: Do versioning?
         var tags = new Array();
-        tags[tags.length] = "<link type='text/css' rel='stylesheet' href='" + systemsbiology.CssBase + "/" + pkg + ".css'>";
+        if(pkg != "bioheatmap") {
+            tags[tags.length] = "<link type='text/css' rel='stylesheet' href='" + systemsbiology.CssBase + "/" + pkg + ".css'>";
+        }
         return tags;
     }
 };
