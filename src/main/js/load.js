@@ -62,6 +62,8 @@ var systemsbiology = {
             tags[tags.length] = addScriptTag("filterDataTableControl");
         } else if (pkg == "exportDataTable") {
             tags[tags.length] = addScriptTag("exportDataTable");            
+        } else if (pkg == "bioheatmap") {
+            tags[tags.length] = addScriptTag("bioheatmap");
         }
         return tags;
     },
