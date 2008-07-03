@@ -207,7 +207,11 @@ org.systemsbiology.visualization.BioHeatMap = Class.create({
         }
         this.containerElement.appendChild(canvasObj);
 
-        this.canvas = excanvas(canvasObj);
+        if (this.canvas.getContext)             
+            this.canvas = canvasObj; // FF or safari
+        else
+            this.canvas = excanvas(canvasObj); // IE
+
         if (this.canvas.getContext) {
             this.ctx = this.canvas.getContext("2d");
         }
