@@ -91,6 +91,7 @@ org.systemsbiology.visualization.BioHeatMap = Class.create({
         // this.ctx - the canvas context object
         this._debug = false;
         this._drawError = false;
+        this.data = null;
         this.options = null;
         this.canvas = null;
     },
@@ -99,6 +100,7 @@ org.systemsbiology.visualization.BioHeatMap = Class.create({
     // Parameter data is of type google.visualization.DataTable.
     // Parameter options is a name/value map of options.
     draw: function(data, options) {
+        this.data = data;
         this.options = options;
         this._setupCanvas();
         var canvas = this.canvas;
