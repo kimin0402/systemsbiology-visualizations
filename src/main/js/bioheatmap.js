@@ -207,7 +207,7 @@ org.systemsbiology.visualization.BioHeatMap = Class.create({
         }
         this.containerElement.appendChild(canvasObj);
 
-        if (this.canvas.getContext)             
+        if (canvasObj.getContext)             
             this.canvas = canvasObj; // FF or safari
         else
             this.canvas = excanvas(canvasObj); // IE
