@@ -70,7 +70,6 @@ org.systemsbiology.visualization.BioHeatMap = Class.create({
         this._columnLabelBottomPadding = 3;
         this._rowLabelRightPadding = 3;
 
-
         // events
         this._selected = []; // list of selections
         this._selectedState = false;
