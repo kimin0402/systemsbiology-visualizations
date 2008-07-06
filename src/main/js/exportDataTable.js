@@ -26,9 +26,11 @@ org.systemsbiology.visualization.ExportDataTable = Class.create({
 
         this.columnSeparator = ",";
         this.rowSeparator = "\n";
+        this.undefinedValue = "null";
         if (options) {
-            this.columnSeparator = options.columnSeparator;
-            this.rowSeparator = options.rowSeparator;
+            if (options.columnSeparator) this.columnSeparator = options.columnSeparator;
+            if (options.rowSeparator) this.rowSeparator = options.rowSeparator;
+            if (options.undefinedValue) this.undefinedValue = options.undefinedValue;
         }
 
         var html = "";
@@ -45,7 +47,12 @@ org.systemsbiology.visualization.ExportDataTable = Class.create({
             if (i != 0) txt += this.rowSeparator;
             for (var j = 0; j < this.data.getNumberOfColumns(); j++) {
                 if (j != 0) txt += this.columnSeparator;
-                txt += this.data.getValue(i, j);
+                var val = this.data.getValue(i, j);
+                if (val != null) {
+                	txt += val;
+                } else {
+                    txt += this.undefinedValue;
+                }
             }
         }
         return txt;
