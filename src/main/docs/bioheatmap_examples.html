@@ -39,7 +39,7 @@
 
             // draw table
             table = new google.visualization.Table(document.getElementById("tableContainer"));
-            table.draw(data);
+            table.draw(data,{});
 
             google.visualization.events.addListener(table, 'select', function() {
                 heatmap.setSelection(table.getSelection());
