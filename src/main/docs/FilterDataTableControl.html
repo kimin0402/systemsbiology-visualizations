@@ -242,7 +242,7 @@ When new filter criteria is selected:
             }
         });
 
-        tableA.draw(data);
+        tableA.draw(data,{showRowNumber:false});
 
             // add listeners
         google.visualization.events.addListener(tableA, "select", function() {
@@ -326,7 +326,7 @@ When new filter criteria is selected:
             }
         });
 
-        tableA.draw(data);
+        tableA.draw(data,{showRowNumber:false});
 
         // add listeners
         google.visualization.events.addListener(tableA, "select", function() {
