@@ -47,7 +47,7 @@ org.systemsbiology.visualization.BioHeatMap = Class.create({
         //  - defaults
         this._font = "sans";
         this._useRowNames = true;
-        this._minimumFontHeight = 7;
+        //this._minimumFontHeight = 7;
         this._fontHeight = 10;
         this._cellSpacing = 0; // NOT SUPPORTED YET!
         this._cellWidth = 15;
@@ -56,6 +56,7 @@ org.systemsbiology.visualization.BioHeatMap = Class.create({
         this._canvasHeight = null;
         this._cellBorder = false;
         this._drawHeatmapBorder = true;
+        this._fixedCanvasSize = false;
 
         // color defaults
         this._maxColors = 64; // number of colors
@@ -118,7 +119,7 @@ org.systemsbiology.visualization.BioHeatMap = Class.create({
                                                                                                           passThroughBlack: this._passThroughBlack});
 
             // Calculate default positions and lengths
-            if (this._canvasHeight && this._canvasWidth) {
+            if (this._fixedCanvasSize) {
                 this._setDefaultsByHeatMapSize(data, options);
             } else {
                 this._setDefaultsByCellSize(data, options);
@@ -207,7 +208,7 @@ org.systemsbiology.visualization.BioHeatMap = Class.create({
         }
         this.containerElement.appendChild(canvasObj);
 
-        if (canvasObj.getContext)             
+        if (canvasObj.getContext)
             this.canvas = canvasObj; // FF or safari
         else
             this.canvas = excanvas(canvasObj); // IE
@@ -336,9 +337,10 @@ org.systemsbiology.visualization.BioHeatMap = Class.create({
             this._canvasWidth = options.mapWidth;
         if(options.mapHeight)
             this._canvasHeight = options.mapHeight;
+        if(options.mapHeight && options.mapWidth)
+            this._fixedCanvasSize=true;
         if(options.fontHeight>0)
             this._fontHeight = options.fontHeight;
-
 
         // padding
         if (options.horizontalPadding)
@@ -407,20 +409,20 @@ org.systemsbiology.visualization.BioHeatMap = Class.create({
         this._cellWidth = cellDimension;
         this._cellHeight = cellDimension;
 
-        if (cellDimension < this._minimumFontHeight) {
-            this._displayError("Canvas size is too small to render properly.");
-        }
+//        if (cellDimension < this._minimumFontHeight) {
+//            this._displayError("Canvas size is too small to render properly.");
+//        }
         this._checkCellAndFontSizes();
     },
 
 
     // checks to make sure font and cell sizes will play nice together on the screen
     _checkCellAndFontSizes: function() {
-        if (this._cellHeight < this._minimumFontHeight || this._cellWidth < this._minimumFontHeight) {
-            this._displayError("Cell size is too small to render properly.");
-        } else if (this._fontHeight > this._cellHeight || this._fontHeight > this._cellWidth) {
-            this._displayError("Font size is too large to render properly.");
-        }
+//        if (this._cellHeight < this._minimumFontHeight || this._cellWidth < this._minimumFontHeight) {
+//            this._displayError("Cell size is too small to render properly.");
+//        } else if (this._fontHeight > this._cellHeight || this._fontHeight > this._cellWidth) {
+//            this._displayError("Font size is too large to render properly.");
+//        }
     },
 
 
@@ -697,10 +699,10 @@ if (!window.console || !console.firebug)
 org.systemsbiology.visualization.DiscreteColorRange = Class.create({
     // --------------------------------
     // constants
-    // --------------------------------   
+    // --------------------------------
     MINCOLORS: 2,
 	PASS_THROUGH_BLACK_MINCOLORS: 2,
-	NO_PASS_THROUGHBLACK_MINCOLORS: 2,	
+	NO_PASS_THROUGHBLACK_MINCOLORS: 2,
 	MINRGB: 0,
 	MAXRGB: 255,
     BLACK_RGBA: {r:0, g:0, b:0, a:1},
@@ -732,7 +734,7 @@ org.systemsbiology.visualization.DiscreteColorRange = Class.create({
     // Public Methods
     // --------------------------------
 
-    // constructor    
+    // constructor
     initialize: function(maxColors,dataRange,options) {
         // check required parameters
         if(maxColors>=1 && dataRange) {
@@ -788,15 +790,15 @@ org.systemsbiology.visualization.DiscreteColorRange = Class.create({
             newDataBin = Math.ceil(newDataBin);
         else
             newDataBin = Math.floor(newDataBin);
-        
 
-        this._log('value: '+dataValue + ' bin: '+dataBin + ' new bin: '+ newDataBin);        
+
+        this._log('value: '+dataValue + ' bin: '+dataBin + ' new bin: '+ newDataBin);
 
         // assure bounds
         if(newDataBin<0)
             newDataBin=0;
         if(newDataBin>=this._colorRange.length)
-            newDataBin = (this._colorRange.length)-1; 
+            newDataBin = (this._colorRange.length)-1;
         return this._colorRange[newDataBin];
     },
 
@@ -839,7 +841,7 @@ org.systemsbiology.visualization.DiscreteColorRange = Class.create({
     // --------------------------------
     // Private Methods
     // --------------------------------
-    
+
     // maps data ranges to colors
     _setupColorRange: function() {
         var dataRange = this._dataRange;
@@ -853,7 +855,7 @@ org.systemsbiology.visualization.DiscreteColorRange = Class.create({
             maxColors = 1;
         }
         this._maxDataSpace = Math.abs(dataRange.min) + Math.abs(dataRange.max);
-        this._dataStep = this._maxDataSpace / maxColors;        
+        this._dataStep = this._maxDataSpace / maxColors;
 
         if(this._passThroughBlack) {
             // determine the color step for each attribute of the color
@@ -881,14 +883,14 @@ org.systemsbiology.visualization.DiscreteColorRange = Class.create({
                 b: this._calcColorStep(this._minColor.b, this._maxColor.b, maxColors),
                 a: this._calcColorStep(this._minColor.a, this._maxColor.a, maxColors)
             };
-            this._addColorsToRange(this._minColor,colorStep,maxColors);            
+            this._addColorsToRange(this._minColor,colorStep,maxColors);
         }
 
         // calc data step
         this._maxDataSpace = Math.abs(dataRange.min) + Math.abs(dataRange.max);
         this._dataStep = this._maxDataSpace / maxColors;
 
-        this._log('dataStep: '+this._dataStep);        
+        this._log('dataStep: '+this._dataStep);
 
     },
 
