@@ -18,23 +18,28 @@
           var table;
           var heatmap;
 
-          var PlotUtils = {
+          var PlotUtils = {              
               getDataSelectionAsPlotTable: function(dataTable1,selectionObj) {
-                  var selectedRow = selectionObj[0].row;                  
-                  var geneName = dataTable1.getValue(selectedRow,0);
                   var dataTable2 = new google.visualization.DataTable();
-                  dataTable2.addColumn('string','Time');
-                  dataTable2.addColumn('number',geneName);
+                  dataTable2.addColumn('string', 'Time');
+                  for (var i = 0; i < selectionObj.length; i++) {
+                      var selectedRow = selectionObj[i].row;
+                      var geneName = dataTable1.getValue(selectedRow, 0);
+                      dataTable2.addColumn('number', geneName);
+                  }
 
                   var time=0;
                   // transform row to column
                   for (var col = 1; col < dataTable1.getNumberOfColumns(); col++) {
                       var newRowIndex = dataTable2.addRow();
-                      var value = dataTable1.getValue(selectedRow,col);
-                      var formattedValue = dataTable1.getFormattedValue(selectedRow,col);
-                      if(!formattedValue) formattedValue = value;
-                      dataTable2.setCell(newRowIndex, 0, time+"", time+"");
-                      dataTable2.setCell(newRowIndex, 1, value, formattedValue);
+                      dataTable2.setCell(newRowIndex, 0, time + "", time + "");
+                      for (var i = 0; i < selectionObj.length; i++) {
+                          var selectedRow = selectionObj[i].row;
+                          var value = dataTable1.getValue(selectedRow, col);
+                          var formattedValue = dataTable1.getFormattedValue(selectedRow, col);
+                          if (!formattedValue) formattedValue = value;
+                          dataTable2.setCell(newRowIndex, i+1, value, formattedValue);
+                      }
                       time++;
                   }
                   return dataTable2;
