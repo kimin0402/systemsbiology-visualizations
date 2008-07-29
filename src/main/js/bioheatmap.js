@@ -627,10 +627,15 @@ org.systemsbiology.visualization.BioHeatMap = Class.create({
             if (t) {
                 var x = e.clientX + (window.pageXOffset || 0);
                 var y = e.clientY + (window.pageYOffset || 0);
-                do
-                    x -= t.offsetLeft + parseInt(t.style.borderLeftWidth || 0),
-                            y -= t.offsetTop + parseInt(t.style.borderTopWidth || 0);
-                while (t = t.offsetParent);
+                while(t) {
+                    xOffset = t.offsetLeft + parseInt(t.style.borderLeftWidth || 0);
+                    xOffset -= t.scrollLeft;
+                    x -= xOffset;
+                    yOffset = t.offsetTop + parseInt(t.style.borderTopWidth || 0);
+                    yOffset -= t.scrollTop;
+                    y -= yOffset;
+                    t = t.offsetParent
+                }
 
                 this._clickPosition = {x:x,y:y};
                 var point = {x:x,y:y};
