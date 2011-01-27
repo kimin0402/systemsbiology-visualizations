@@ -32,7 +32,7 @@ if(!org) {
 // -
 // -   Description: Draws a gene expression style heatmap using Canvas
 // -   Author: dburdick
-// -   Version: 1.0
+// -   Version: 1.0.1
 // -
 // ---------------------------------------------------------------------------------------------------------------------
 org.systemsbiology.visualization.BioHeatMap = Class.create({
