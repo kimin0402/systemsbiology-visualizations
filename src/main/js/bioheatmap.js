@@ -94,6 +94,7 @@ org.systemsbiology.visualization.BioHeatMap = Class.create({
         this.data = null;
         this.options = null;
         this.canvas = null;
+        this.tooltipElement = null;
     },
 
     // Main drawing logic.
@@ -103,6 +104,7 @@ org.systemsbiology.visualization.BioHeatMap = Class.create({
         this.data = data;
         this.options = options;
         this._setupCanvas();
+        this._setupTooltipElement();
         var canvas = this.canvas;
         var ctx = this.ctx;
 
@@ -137,7 +139,9 @@ org.systemsbiology.visualization.BioHeatMap = Class.create({
 
             if(this._drawHeatmapBorder)
                 ctx.strokeRect(0, 0, canvas.width, canvas.height);
-            this.canvas.onclick = this._getMouseXY(); // mouse event handler
+            var heatMap = this;
+            this.canvas.onclick = this._getMouseXY(function(p) { heatMap._onClickEvent(p) }); // mouse click event handler
+            this.canvas.onmousemove = this._getMouseXY(function(p) { heatMap._onMoveEvent(p) }); // mouse move event handler
 
             this._logCalculated(); // log some values to the console
 
@@ -216,6 +220,11 @@ org.systemsbiology.visualization.BioHeatMap = Class.create({
         if (this.canvas.getContext) {
             this.ctx = this.canvas.getContext("2d");
         }
+    },
+
+    _setupTooltipElement: function() {
+        this.tooltipElement = document.createElement('div');
+        this.containerElement.appendChild(this.tooltipElement);
     },
 
     // ------------------------------------
@@ -604,6 +613,22 @@ org.systemsbiology.visualization.BioHeatMap = Class.create({
         }
     },
 
+    // mouse move handler to implement tooltip behaviour
+    _onMoveEvent: function(point) {
+        var cell = this._getCellFromXY(point);
+        if (cell) {
+            var props = this.data.getProperties(cell.row, cell.col);
+            if(props) {
+                var tooltip = props.tooltip;
+                this.tooltipElement.hidden = false;
+                this.tooltipElement.innerHTML = "{" + point.x + ", " + point.y + "} " + tooltip;
+            }
+        } else {
+            this.tooltipElement.hidden = false;
+            this.tooltipElement.innerHTML = "{" + point.x + ", " + point.y + "}";
+        }
+    },
+
     _clearSelection: function() {
         if (this._selectionState) {
             //        this.ctx.restore();
@@ -618,31 +643,48 @@ org.systemsbiology.visualization.BioHeatMap = Class.create({
     // Mouse functions
     // ------------------------------------
 
-
-    _getMouseXY: function() {
+    // note: modified to take a callback
+    _getMouseXY: function(handler) {
         var bioHeatMap = this;
         return function(e) {
-            var t = this;
             if(!e) e = window.event; // for IE
-            if (t) {
-                var x = e.clientX + (window.pageXOffset || 0);
-                var y = e.clientY + (window.pageYOffset || 0);
-                while(t) {
-                    xOffset = t.offsetLeft + parseInt(t.style.borderLeftWidth || 0);
-                    xOffset -= t.scrollLeft;
-                    x -= xOffset;
-                    yOffset = t.offsetTop + parseInt(t.style.borderTopWidth || 0);
-                    yOffset -= t.scrollTop;
-                    y -= yOffset;
-                    t = t.offsetParent
-                }
 
-                this._clickPosition = {x:x,y:y};
-                var point = {x:x,y:y};
-                bioHeatMap._onClickEvent(point)
-                return point;
+            // absolute mouse position on the page
+            var mouseX = 0;
+            var mouseY = 0;
+            if (e.pageX || e.pageY) {
+                mouseX = e.pageX;
+                mouseY = e.pageY;
+            }
+            else if (e.clientX || e.clientY) {
+                mouseX = e.clientX + document.body.scrollLeft
+                        + document.documentElement.scrollLeft;
+                mouseY = e.clientY + document.body.scrollTop
+                        + document.documentElement.scrollTop;
             }
 
+            // target element
+            var t;
+	        if (e.target) t = e.target;
+	        else if (e.srcElement) t = e.srcElement;
+	        if (t.nodeType == 3) // defeat Safari bug
+		    t = t.parentNode;
+
+            // target element location in page
+            var curleft = 0;
+            var curtop = 0;
+            if (t.offsetParent) {
+                do {
+                    curleft += t.offsetLeft;
+                    curtop += t.offsetTop;
+                } while (t = t.offsetParent)
+            }
+
+            // x,y relative to target
+            this._clickPosition = {x: mouseX - curleft, y: mouseY - curtop}; // query: this is altering the canvas - was this the intention? Retained to match old code
+            var point = {x: mouseX - curleft, y: mouseY - curtop};
+            handler(point);
+            return point;
         }
     },
 
