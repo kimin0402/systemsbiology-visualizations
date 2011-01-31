@@ -771,7 +771,7 @@ org.systemsbiology.visualization.DiscreteColorRange = Class.create({
     getCellColorString: function(dataValue) {
         var colorValue = this.getCellColorRGBA(dataValue);
         var colorString;
-        if (colorValue.r >= 0 && colorValue.g >= 0 && colorValue.b >= 0 && colorValue.a >= 0) {
+        if (colorValue && colorValue.r >= 0 && colorValue.g >= 0 && colorValue.b >= 0 && colorValue.a >= 0) {
             colorString = this.getRgbaColorString(colorValue);
         } else {
             colorString = this.getRgbaColorString(this._emptyDataColor);
