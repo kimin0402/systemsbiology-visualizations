@@ -71,6 +71,10 @@ org.systemsbiology.visualization.BioHeatMap = Class.create({
         this._columnLabelBottomPadding = 3;
         this._rowLabelRightPadding = 3;
 
+        // tooltip support
+        this._tooltipDelay = 500;
+        this.tooltipElement = null;
+
         // events
         this._selected = []; // list of selections
         this._selectedState = false;
@@ -94,7 +98,6 @@ org.systemsbiology.visualization.BioHeatMap = Class.create({
         this.data = null;
         this.options = null;
         this.canvas = null;
-        this.tooltipElement = null;
     },
 
     // Main drawing logic.
@@ -104,7 +107,7 @@ org.systemsbiology.visualization.BioHeatMap = Class.create({
         this.data = data;
         this.options = options;
         this._setupCanvas();
-        this._setupTooltipElement();
+        this._setupTooltipElement(options);
         var canvas = this.canvas;
         var ctx = this.ctx;
 
@@ -140,8 +143,8 @@ org.systemsbiology.visualization.BioHeatMap = Class.create({
             if(this._drawHeatmapBorder)
                 ctx.strokeRect(0, 0, canvas.width, canvas.height);
             var heatMap = this;
-            this.canvas.onclick = this._getMouseXY(function(p) { heatMap._onClickEvent(p) }); // mouse click event handler
-            this.canvas.onmousemove = this._getMouseXY(function(p) { heatMap._onMoveEvent(p) }); // mouse move event handler
+            this.canvas.onclick = this._getMouseXY(function(lp, mp) { heatMap._onClickEvent(lp, mp) }); // mouse click event handler
+            this.canvas.onmousemove = this._getMouseXY(function(lp, mp) { heatMap._onMoveEvent(lp, mp) }); // mouse move event handler
 
             this._logCalculated(); // log some values to the console
 
@@ -222,9 +225,12 @@ org.systemsbiology.visualization.BioHeatMap = Class.create({
         }
     },
 
-    _setupTooltipElement: function() {
+    _setupTooltipElement: function(options) {
         this.tooltipElement = document.createElement('div');
-        this.containerElement.appendChild(this.tooltipElement);
+        document.body.appendChild(this.tooltipElement);
+        this.tooltipElement.style.display = 'none';
+        this.tooltipElement.style.position = 'absolute';
+        this.tooltipElement.className = options.tooltipClass || "bioHeatMapTooltip";
     },
 
     // ------------------------------------
@@ -364,6 +370,8 @@ org.systemsbiology.visualization.BioHeatMap = Class.create({
         else if(options.drawBorder == true)
             this._drawHeatmapBorder = true;
 
+        if(options.tooltipDelay)
+          this._tooltipDelay = options.tooltipDelay
 
         // TODO : more OPTIONAL PARAMETERS?
         // - Row normalize the data to average of 0 and variance +/-1?
@@ -614,19 +622,32 @@ org.systemsbiology.visualization.BioHeatMap = Class.create({
     },
 
     // mouse move handler to implement tooltip behaviour
-    _onMoveEvent: function(point) {
-        var cell = this._getCellFromXY(point);
-        if (cell) {
+    _onMoveEvent: function(localPos, mousePos) {
+        // all movements clear the current timer
+        var tooltipElement = this.tooltipElement;
+        var timerId = tooltipElement.timerId;
+        if(timerId) clearTimeout(timerId);
+
+        var cell = this._getCellFromXY(localPos);
+        if (cell && cell.row != -1) {
             var props = this.data.getProperties(cell.row, cell.col);
-            if(props) {
-                var tooltip = props.tooltip;
-                this.tooltipElement.hidden = false;
-                this.tooltipElement.innerHTML = "{" + point.x + ", " + point.y + "} " + tooltip;
+            if(props && props.tooltip) {
+                var tooltip = props.tooltip.replace('\n', '<br/>'); // line-breaks for newline characters
+                var tooltipDelay = this._tooltipDelay;
+                var showTooltip = function() {
+                    tooltipElement.style.display = "block";
+                    tooltipElement.innerHTML = tooltip;
+                    tooltipElement.style.left = mousePos.x + "px";
+                    tooltipElement.style.top = (mousePos.y - tooltipElement.offsetHeight) + "px";
+                };
+                tooltipElement.timerId = setTimeout(showTooltip, tooltipDelay);
+
+                return;
             }
-        } else {
-            this.tooltipElement.hidden = false;
-            this.tooltipElement.innerHTML = "{" + point.x + ", " + point.y + "}";
         }
+
+        // fall-through for if no tooltip should be displayed
+        tooltipElement.style.display = "none";
     },
 
     _clearSelection: function() {
@@ -682,9 +703,10 @@ org.systemsbiology.visualization.BioHeatMap = Class.create({
 
             // x,y relative to target
             this._clickPosition = {x: mouseX - curleft, y: mouseY - curtop}; // query: this is altering the canvas - was this the intention? Retained to match old code
-            var point = {x: mouseX - curleft, y: mouseY - curtop};
-            handler(point);
-            return point;
+            var localPos = {x: mouseX - curleft, y: mouseY - curtop};
+            var mousePos = {x : mouseX, y: mouseY};
+            handler(localPos, mousePos);
+            return localPos;
         }
     },
 
