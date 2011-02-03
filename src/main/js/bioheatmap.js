@@ -72,6 +72,7 @@ org.systemsbiology.visualization.BioHeatMap = Class.create({
         this._rowLabelRightPadding = 3;
 
         // tooltip support
+        this._displayCellTooltips = true;
         this._tooltipDelay = 500;
         this.tooltipElement = null;
 
@@ -372,6 +373,8 @@ org.systemsbiology.visualization.BioHeatMap = Class.create({
 
         if(options.tooltipDelay)
           this._tooltipDelay = options.tooltipDelay
+        if(options.displayCellTooltips != null && options.displayCellTooltips == false)
+          this._displayCellTooltips = false;
 
         // TODO : more OPTIONAL PARAMETERS?
         // - Row normalize the data to average of 0 and variance +/-1?
@@ -623,6 +626,9 @@ org.systemsbiology.visualization.BioHeatMap = Class.create({
 
     // mouse move handler to implement tooltip behaviour
     _onMoveEvent: function(localPos, mousePos) {
+        // only run if displaying tooltips is enabled
+        if (this._displayCellTooltips) {
+
         // all movements clear the current timer
         var tooltipElement = this.tooltipElement;
         var timerId = tooltipElement.timerId;
@@ -648,6 +654,7 @@ org.systemsbiology.visualization.BioHeatMap = Class.create({
 
         // fall-through for if no tooltip should be displayed
         tooltipElement.style.display = "none";
+        }
     },
 
     _clearSelection: function() {
