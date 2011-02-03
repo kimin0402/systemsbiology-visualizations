@@ -632,7 +632,7 @@ org.systemsbiology.visualization.BioHeatMap = Class.create({
         if (cell && cell.row != -1) {
             var props = this.data.getProperties(cell.row, cell.col);
             if(props && props.tooltip) {
-                var tooltip = props.tooltip.replace('\n', '<br/>'); // line-breaks for newline characters
+                var tooltip = props.tooltip.replace(/\n/g, '<br/>'); // line-breaks for newline characters
                 var tooltipDelay = this._tooltipDelay;
                 var showTooltip = function() {
                     tooltipElement.style.display = "block";
