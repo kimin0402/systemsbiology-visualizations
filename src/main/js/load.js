@@ -17,10 +17,8 @@
 **    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307  USA
 */
 var systemsbiology = {
-//    ScriptBase: "http://systemsbiology-visualizations.googlecode.com/svn/branches/1.0.1/src/main/js",
-//    CssBase: "http://systemsbiology-visualizations.googlecode.com/svn/branches/1.0.1/src/main/css",
-    ScriptBase: "file:///home/nmrp3/devel/systemsbiology-visualizations_1.0.1/src/main/js", // fixme: Revert url
-    CssBase: "file:///home/nmrp3/devel/systemsbiology-visualizations_1.0.1/src/main/css",   // fixme: Revert url
+    ScriptBase: "http://systemsbiology-visualizations.googlecode.com/svn/branches/1.0.1/src/main/js",
+    CssBase: "http://systemsbiology-visualizations.googlecode.com/svn/branches/1.0.1/src/main/css",
     load: function(library, version, options) {
         if (library == "visualization") {
             if (options) {
