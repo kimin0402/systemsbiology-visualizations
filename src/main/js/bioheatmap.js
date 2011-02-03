@@ -105,6 +105,7 @@ org.systemsbiology.visualization.BioHeatMap = Class.create({
     // Parameter data is of type google.visualization.DataTable.
     // Parameter options is a name/value map of options.
     draw: function(data, options) {
+        options = options || {};
         this.data = data;
         this.options = options;
         this._setupCanvas();
