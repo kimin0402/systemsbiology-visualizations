@@ -18,7 +18,7 @@
 */
 var systemsbiology = {
     ScriptBase: "https://raw.githubusercontent.com/kimin0402/systemsbiology-visualizations/master/src/main/js",
-    CssBase: "https://raw.githubusercontent.com/kimin0402/systemsbiology-visualizations/master/src/main/css/",
+    CssBase: "https://raw.githubusercontent.com/kimin0402/systemsbiology-visualizations/master/src/main/css",
     load: function(library, version, options) {
         if (library == "visualization") {
             if (options) {
